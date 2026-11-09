@@ -1,0 +1,12 @@
+# Minimal requirements for AgentCore deployment (Lab 3 agent only)
+#
+# strands-agents is capped below 1.56.0: that release moved bidi hook events
+# into strands.experimental.bidi and renamed them, removing
+# BidiAfterInvocationEvent from strands.experimental.hooks.events. Current
+# bedrock-agentcore still imports the old name at module load, so pairing it
+# with strands-agents>=1.56.0 fails the container import at startup and surfaces
+# as "Runtime initialization time exceeded". 1.55.1 is the last release that
+# still exports the old bidi names; keeping bedrock-agentcore on latest.
+strands-agents>=1.55.0,<1.56.0
+bedrock-agentcore[strands-agents]
+cachetools>=5.3.2

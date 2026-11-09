@@ -1,0 +1,59 @@
+FINANCIAL RECORDS - PROPERTY: 17 Riverside Court
+Tenant: TechStart Inc (tenant-002)
+
+INVOICE #INV-2024-1001
+Date: 2024-02-07
+Vendor: QuickFix Plumbing
+Description: Emergency burst pipe repair and water extraction
+Amount: $2,800.00
+Category: Emergency Repair
+Payment Status: Paid (2024-02-14)
+
+INVOICE #INV-2024-1002
+Date: 2024-02-15
+Vendor: BuildRight Construction
+Description: Replastering and repainting water-damaged wall
+Amount: $1,450.00
+Category: Corrective Maintenance
+Payment Status: Paid (2024-02-28)
+
+INVOICE #INV-2024-1003
+Date: 2024-05-22
+Vendor: RoofPro Solutions
+Description: Storm damage roof repair - 15 tiles, chimney flashing
+Amount: $4,200.00
+Category: Corrective Maintenance
+Payment Status: Paid (2024-06-05)
+
+INVOICE #INV-2024-1004
+Date: 2024-09-02
+Vendor: SparkSafe Electrical
+Description: Emergency electrical fault repair - MCB replacement
+Amount: $890.00
+Category: Emergency Repair
+Payment Status: Paid (2024-09-10)
+
+INVOICE #INV-2025-1001
+Date: 2025-02-16
+Vendor: SparkSafe Electrical
+Description: Full Electrical Installation Condition Report (EICR)
+Amount: $1,200.00
+Category: Compliance/Inspection
+Payment Status: Paid (2025-02-28)
+
+QUOTE #QT-2025-001
+Date: 2025-03-01
+Vendor: SparkSafe Electrical
+Description: Full property rewire (recommended by EICR)
+Amount: $18,500.00 (estimated)
+Category: Major Works
+Status: Pending approval
+
+ANNUAL BUDGET SUMMARY 2024
+Total Maintenance Spend: $9,340.00
+  - Emergency: $3,690.00
+  - Corrective: $5,650.00
+  - Compliance: $0.00
+Budget Allocation: $5,000.00
+Over Budget: $4,340.00 (187% utilization)
+Notes: Significant overspend due to burst pipe and storm damage. Budget review recommended.

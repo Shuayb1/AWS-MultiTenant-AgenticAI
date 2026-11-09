@@ -1,0 +1,17 @@
+{
+  "name": "workshop-module3-pooled-agent",
+  "framework": "strands",
+  "runtime": "PYTHON_3_13",
+  "entryPoint": [
+    "agent.py"
+  ],
+  "networkMode": "PUBLIC",
+  "requestHeaderAllowlist": [
+    "Authorization",
+    "X-Amzn-Bedrock-AgentCore-Runtime-Custom-Authorization"
+  ],
+  "lifecycleConfiguration": {
+    "idleRuntimeSessionTimeout": 300,
+    "maxLifetime": 1800
+  }
+}

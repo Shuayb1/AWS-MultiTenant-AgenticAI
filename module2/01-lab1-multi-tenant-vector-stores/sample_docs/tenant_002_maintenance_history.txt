@@ -1,0 +1,47 @@
+MAINTENANCE HISTORY - PROPERTY: 17 Riverside Court
+Tenant: TechStart Inc (tenant-002)
+
+WORK ORDER #WO-2024-101
+Date: 2024-02-05
+Type: Emergency Repair
+Description: Burst pipe in ground floor bathroom causing water damage
+Contractor: QuickFix Plumbing
+Status: Completed
+Duration: 6 hours
+Notes: Pipe replaced. Water damage to adjacent wall. Dehumidifiers deployed for 48 hours. Follow-up plastering required.
+
+WORK ORDER #WO-2024-102
+Date: 2024-02-12
+Type: Corrective Maintenance
+Description: Replastering and repainting of water-damaged wall section
+Contractor: BuildRight Construction
+Status: Completed
+Duration: 8 hours
+Notes: Wall dried, replastered, and repainted. Moisture readings normal post-repair.
+
+WORK ORDER #WO-2024-103
+Date: 2024-05-18
+Type: Corrective Maintenance
+Description: Roof leak repair - multiple tiles displaced by storm damage
+Contractor: RoofPro Solutions
+Status: Completed
+Duration: 12 hours
+Notes: 15 tiles replaced. Flashing around chimney resealed. Temporary tarpaulin removed. Significant water staining in attic space noted.
+
+WORK ORDER #WO-2024-104
+Date: 2024-08-30
+Type: Emergency Repair
+Description: Electrical fault in main distribution board causing partial power loss
+Contractor: SparkSafe Electrical
+Status: Completed
+Duration: 4 hours
+Notes: Faulty MCB replaced. Full circuit testing performed. Recommended full rewire assessment within 12 months.
+
+WORK ORDER #WO-2025-101
+Date: 2025-02-14
+Type: Inspection
+Description: Full electrical condition report (EICR) following previous fault
+Contractor: SparkSafe Electrical
+Status: Completed
+Duration: 8 hours
+Notes: Multiple C2 (potentially dangerous) findings. Full rewire recommended within 6 months. Report filed with landlord.

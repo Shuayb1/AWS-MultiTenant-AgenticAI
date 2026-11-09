@@ -1,0 +1,43 @@
+FINANCIAL RECORDS - PROPERTY: 42 Oakwood Drive
+Tenant: Acme Corporation (tenant-001)
+
+INVOICE #INV-2024-0112
+Date: 2024-03-18
+Vendor: CoolAir Services Ltd
+Description: Annual HVAC inspection and filter replacement
+Amount: $450.00
+Category: Preventive Maintenance
+Payment Status: Paid (2024-03-25)
+
+INVOICE #INV-2024-0287
+Date: 2024-06-25
+Vendor: Heights Property Maintenance
+Description: Gutter cleaning and downpipe bracket repair
+Amount: $680.00
+Category: Corrective Maintenance
+Payment Status: Paid (2024-07-02)
+
+INVOICE #INV-2024-0341
+Date: 2024-09-12
+Vendor: SafeGuard Fire Systems
+Description: Fire alarm annual testing and certification
+Amount: $320.00
+Category: Compliance
+Payment Status: Paid (2024-09-20)
+
+INVOICE #INV-2025-0045
+Date: 2025-01-22
+Vendor: Heights Property Maintenance
+Description: Roof tile replacement (3 tiles, north slope)
+Amount: $1,250.00
+Category: Corrective Maintenance
+Payment Status: Paid (2025-02-01)
+
+ANNUAL BUDGET SUMMARY 2024
+Total Maintenance Spend: $1,450.00
+  - Preventive: $450.00
+  - Corrective: $680.00
+  - Compliance: $320.00
+Budget Allocation: $5,000.00
+Remaining: $3,550.00
+Utilization: 29%

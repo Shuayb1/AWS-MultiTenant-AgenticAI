@@ -1,0 +1,38 @@
+HOME SURVEY REPORT
+Tenant: tenant-001
+Property: 42 Oakwood Drive, Springfield
+
+ROOF
+Condition: Good
+Notes: A few missing shingles on the southwest corner. Gutters are clear and
+properly attached. Flashing around chimney is intact with no visible gaps.
+Estimated remaining life: 8-10 years.
+
+WALLS AND CEILINGS
+Condition: Good
+Notes: Minor hairline cracks in the living room ceiling, consistent with normal
+settlement. No signs of damp or water ingress. External render is sound with
+no significant spalling.
+
+FLOORING
+Types: Hardwood (ground floor), Carpet (bedrooms)
+Condition: Good
+Notes: Hardwood floors show normal wear. Carpet in master bedroom has a small
+stain near the window but is otherwise in good condition.
+
+ELECTRICAL
+Condition: Satisfactory
+Notes: Consumer unit updated in 2019. All visible wiring is in good condition.
+Recommend a full EICR inspection before exchange of contracts.
+
+PLUMBING
+Condition: Good
+Notes: Boiler serviced 6 months ago. Hot water pressure is adequate throughout.
+No visible leaks under sinks or around the bath. Stopcock is accessible and
+operational.
+
+SUMMARY
+The property is in good overall condition for its age (built 1987). The minor
+issues noted above are typical for a property of this age and do not represent
+significant structural concerns. A specialist inspection of the electrical
+installation is recommended prior to purchase.

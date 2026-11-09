@@ -1,0 +1,7 @@
+# Module 3, Lab 2 — Multi-Tenant MCP Tool Gateway
+# Shared requirements for all components (interceptor, Lambda targets, MCP Server, agent)
+bedrock-agentcore>=1.0.0
+cachetools>=5.3.2
+PyJWT[crypto]>=2.8.0
+strands-agents>=0.1.0
+requests>=2.31.0

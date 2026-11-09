@@ -1,0 +1,5 @@
+# Minimal requirements for AgentCore deployment (Lab 4 agent only)
+strands-agents>=0.1.0
+strands-s3-vectors-memory>=0.1.0
+bedrock-agentcore>=0.1.0
+cachetools>=5.3.2

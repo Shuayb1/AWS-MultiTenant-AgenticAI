@@ -1,0 +1,4 @@
+# Module 3, Lab 5 - Per-Tenant Usage Metering
+strands-agents>=1.0.0
+bedrock-agentcore>=0.1.0
+boto3>=1.34.0

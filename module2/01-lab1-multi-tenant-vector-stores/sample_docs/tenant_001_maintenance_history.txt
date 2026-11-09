@@ -1,0 +1,38 @@
+MAINTENANCE HISTORY - PROPERTY: 42 Oakwood Drive
+Tenant: Acme Corporation (tenant-001)
+
+WORK ORDER #WO-2024-001
+Date: 2024-03-15
+Type: Preventive Maintenance
+Description: Annual HVAC system inspection and filter replacement
+Contractor: CoolAir Services Ltd
+Status: Completed
+Duration: 2 hours
+Notes: All units operating within normal parameters. Filters replaced. Recommended next service in 12 months.
+
+WORK ORDER #WO-2024-002
+Date: 2024-06-22
+Type: Corrective Maintenance
+Description: Roof gutter cleaning and minor repair to downpipe bracket
+Contractor: Heights Property Maintenance
+Status: Completed
+Duration: 3 hours
+Notes: Gutters cleared of debris. One downpipe bracket replaced. No structural issues found with roof tiles.
+
+WORK ORDER #WO-2024-003
+Date: 2024-09-10
+Type: Preventive Maintenance
+Description: Fire alarm system annual testing and certification
+Contractor: SafeGuard Fire Systems
+Status: Completed
+Duration: 4 hours
+Notes: All detectors tested and operational. Battery backup verified. Certificate issued valid until September 2025.
+
+WORK ORDER #WO-2025-001
+Date: 2025-01-20
+Type: Corrective Maintenance
+Description: Replacement of three cracked roof tiles on north slope
+Contractor: Heights Property Maintenance
+Status: Completed
+Duration: 5 hours
+Notes: Three tiles replaced. Underlayment inspected and found in good condition. No water ingress detected.

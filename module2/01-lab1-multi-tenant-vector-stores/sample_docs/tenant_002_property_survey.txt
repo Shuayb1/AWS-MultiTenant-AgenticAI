@@ -1,0 +1,43 @@
+HOME SURVEY REPORT
+Tenant: tenant-002
+Property: 17 Maple Close, Riverside
+
+ROOF
+Condition: Poor
+Notes: Significant cracking and lifting of tiles on the north-facing slope.
+Evidence of previous patch repairs that have not held. Moss growth across
+approximately 30% of the roof surface. Immediate remedial work is strongly
+recommended before winter. Estimated cost: £4,000-£6,000.
+
+WALLS AND CEILINGS
+Condition: Fair
+Notes: Damp patch visible on the north-facing external wall of the kitchen,
+approximately 0.5m x 0.3m. Likely caused by the roof defects noted above.
+Internal plaster is soft in this area. Requires investigation and repair
+once roof is addressed.
+
+FLOORING
+Types: Laminate (ground floor), Carpet (first floor)
+Condition: Fair
+Notes: Laminate flooring in the hallway shows signs of water damage and
+lifting at the joints, consistent with the damp ingress noted above.
+First floor carpet is in good condition throughout.
+
+ELECTRICAL
+Condition: Poor
+Notes: Consumer unit is original to the property (circa 1975) and does not
+meet current standards. No RCD protection present. Full rewire is strongly
+recommended. Estimated cost: £5,000-£8,000.
+
+PLUMBING
+Condition: Satisfactory
+Notes: Boiler is 12 years old and approaching end of expected service life.
+Hot water pressure is adequate. Minor drip from the kitchen tap washer.
+Recommend boiler replacement within 2 years.
+
+SUMMARY
+This property requires significant investment before it can be considered
+move-in ready. The roof and electrical installation are the most urgent
+concerns. Buyers should factor remedial costs of £10,000-£15,000 into
+their offer price. A structural engineer's report is also recommended
+given the extent of the damp ingress.

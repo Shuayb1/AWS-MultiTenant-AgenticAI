@@ -1,0 +1,32 @@
+{
+    "description": "Multi-Tenant MCP Tool Gateway — Cedar policy. Permits tool invocation only for requests with a valid custom:tenant_id claim in the JWT. This is the hard boundary — evaluated before the interceptor runs.",
+    "policies": [
+        {
+            "effect": "permit",
+            "description": "Allow tool invocation only when JWT contains a non-empty custom:tenant_id claim",
+            "principal": {
+                "op": "All"
+            },
+            "action": {
+                "op": "All"
+            },
+            "resource": {
+                "op": "All"
+            },
+            "conditions": [
+                {
+                    "kind": "when",
+                    "body": {
+                        "has": {
+                            "left": {
+                                "attr": "custom:tenant_id",
+                                "entity": "context.jwt.claims"
+                            },
+                            "right": true
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
