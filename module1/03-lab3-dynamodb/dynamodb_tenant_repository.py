@@ -151,7 +151,18 @@ class TenantRepository:
             The full item dict written to DynamoDB (including PK, SK, timestamps)
         """
         # TODO: Task 3.1 — write item with composite PK tenantId#entityType
-        raise NotImplementedError("Complete Task 3.1 — create_item")  # REPLACE THIS LINE
+        now = datetime.now(timezone.utc).isoformat()
+        item = {
+            'PK': f"{self.tenant_id}#{entity_type}",
+            'SK': entity_id,
+            'tenantId': self.tenant_id,
+            'entityType': entity_type,
+            'data': data,
+            'createdAt': now,
+            'updatedAt': now,
+        }
+        self.table.put_item(Item=item)
+        return item
     def get_item(self, entity_type: str, entity_id: str) -> Optional[Dict]:
         """
         Retrieve one item by entity type and ID.
@@ -167,7 +178,13 @@ class TenantRepository:
             The item dict, or None if not found
         """
         # TODO: Task 3.2 — retrieve item by composite PK tenantId#entityType
-        raise NotImplementedError("Complete Task 3.2 — get_item")  # REPLACE THIS LINE
+        response = self.table.get_item(
+            Key={
+                'PK': f"{self.tenant_id}#{entity_type}",
+                'SK': entity_id,
+            }
+        )
+        return response.get('Item')
     def query_by_type(self, entity_type: str, limit: int = 100) -> List[Dict]:
         """
         Return all items of a given entity type belonging to this tenant.

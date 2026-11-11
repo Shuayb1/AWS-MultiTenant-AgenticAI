@@ -95,7 +95,7 @@ def invoke_agent(payload: dict, context) -> dict:
             return {"error": "message field required"}
 
         # TODO: Task 5.4 - Attach the TenantMeteringPlugin
-        metering_plugins = []  # REPLACE THIS LINE
+        metering_plugins = [TenantMeteringPlugin(tenant_id=tenant_id, model_id=_MODEL_ID, agent_name="workshopModule3Lab5MeteringAgent")]
 
         agent = Agent(model=_model, system_prompt=SYSTEM_PROMPT, plugins=metering_plugins)
         response = agent(message)

@@ -70,12 +70,12 @@ class MultiTenantAgentCoreMemorySessionManager(AgentCoreMemorySessionManager):
     def _build_actor_id(self, tenant_context: Dict, user_id: str) -> str:
         """Return '{tenantId}:{agentName}:{userId}' — scopes all memory ops to tenant+agent+user."""
         # TODO: Task 3.1 — construct tenant-scoped actor ID
-        raise NotImplementedError("Complete Task 3.1 — _build_actor_id")  # REPLACE THIS LINE
-
+        return f"{tenant_context['tenantId']}:{_AGENT_NAME}:{user_id}"
+        
     def _build_session_id(self, tenant_context: Dict, user_id: str, conversation_id: str) -> str:
         """Return '{tenantId}-{agentName}-{userId}-{conversationId}' — scopes memory to one conversation."""
         # TODO: Task 3.2 — construct tenant-scoped session ID
-        raise NotImplementedError("Complete Task 3.2 — _build_session_id")  # REPLACE THIS LINE
+        return f"{tenant_context['tenantId']}-{_AGENT_NAME}-{user_id}-{conversation_id}"
 
     def register_hooks(self, registry: HookRegistry, **kwargs) -> None:
         """Register all AgentCore hooks plus the per-request tenant injection hook."""
@@ -116,7 +116,43 @@ class MultiTenantAgentCoreMemorySessionManager(AgentCoreMemorySessionManager):
         #                  (d) set config.retrieval_config for LTM namespaces
         #                  (e) swap memory_client.gmcp_client / gmdp_client to scoped clients
         #                  (f) on session change, rehydrate agent.messages via self.list_messages
-        raise NotImplementedError("Complete Task 3.3 — _prepare")  # REPLACE THIS LINE
+        # (a) TVM-scoped credentials for this tenant
+        scoped_session = self._isolation.get_session(tenant_context)
+
+        # (b) tenant-scoped identifiers; detect whether the conversation changed
+        actor_id   = self._build_actor_id(tenant_context, user_id)
+        session_id = self._build_session_id(tenant_context, user_id, conversation_id)
+        switching  = session_id != self.config.session_id
+
+        # (c) bind the singleton to this request
+        self.config.actor_id   = actor_id
+        self.config.session_id = session_id
+        self.session_id        = session_id
+
+        # (d) enable per-turn LTM retrieval. {actorId} resolves to the scoped
+        #     actor, so the namespace begins with the tenant tag and matches
+        #     the TVM role's bedrock-agentcore:namespace condition.
+        self.config.retrieval_config = {
+            "/{actorId}/preferences": RetrievalConfig(top_k=5, relevance_score=0.3),
+            "/{actorId}/facts":       RetrievalConfig(top_k=5, relevance_score=0.4),
+        }
+
+        # (e) swap clients to scoped credentials BEFORE any read
+        self.memory_client.gmcp_client = scoped_session.client(
+            "bedrock-agentcore-control", region_name=self.region_name
+        )
+        self.memory_client.gmdp_client = scoped_session.client(
+            "bedrock-agentcore", region_name=self.region_name
+        )
+
+        # (f) STM: rehydrate the transcript from AgentCore Memory only when the
+        #     session changed. agent.messages is a warm-microVM cache; the
+        #     durable record lives in AgentCore Memory, so a fresh microVM under
+        #     a known session must read it back.
+        if switching:
+            restored = self.list_messages(session_id, agent.agent_id)
+            agent.messages = [m.to_message() for m in restored]
+            self._latest_agent_message[agent.agent_id] = restored[-1] if restored else None
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,4 @@
+export LAB2_RUNTIME_ID="workshopModule3Lab2Agent-zZ89BkALNm"
+export LAB2_AGENT_ENDPOINT="https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-1%3A596531429819%3Aruntime%2FworkshopModule3Lab2Agent-zZ89BkALNm/invocations?qualifier=DEFAULT"
+export GATEWAY_ENDPOINT="https://workshopmultitenanttoolgateway-vo8kinymqd.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp"
+export GATEWAY_ID="workshopmultitenanttoolgateway-vo8kinymqd"

@@ -166,8 +166,13 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE,
         NotImplementedError: until Task 1.1 is complete.
     """
     # TODO: Task 1.1 — implement fixed-size chunking with overlap
-    raise NotImplementedError("Complete Task 1.1 — chunk_text")  # REPLACE THIS LINE
-
+    chunks, start = [], 0
+    while start < len(text):
+        chunk = text[start:start + chunk_size].strip()
+        if chunk:
+            chunks.append(chunk)
+        start += chunk_size - overlap
+    return chunks
 
 # ---------------------------------------------------------------------------
 # Task 1.2 — Embedding
@@ -193,8 +198,20 @@ def embed(text: str, bedrock) -> List[float]:
         NotImplementedError: until Task 1.2 is complete.
     """
     # TODO: Task 1.2 — call bedrock.invoke_model with EMBED_MODEL, return embedding list
-    raise NotImplementedError("Complete Task 1.2 — embed")  # REPLACE THIS LINE
-
+    resp = bedrock.invoke_model(
+        modelId=EMBED_MODEL,
+        body=json.dumps({
+            'taskType': 'SINGLE_EMBEDDING',
+            'singleEmbeddingParams': {
+                'embeddingPurpose': 'GENERIC_INDEX',
+                'embeddingDimension': EMBED_DIM,
+                'text': {'truncationMode': 'END', 'value': text},
+            },
+        }),
+        contentType='application/json',
+        accept='application/json',
+    )
+    return json.loads(resp['body'].read())['embeddings'][0]['embedding']
 
 # ---------------------------------------------------------------------------
 # Helpers (already implemented)

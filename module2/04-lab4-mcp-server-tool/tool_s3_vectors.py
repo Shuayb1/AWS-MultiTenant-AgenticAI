@@ -118,8 +118,35 @@ def search_financial_docs(query: str, tenant_id: str, top_k: int = 5) -> str:
     # TODO: Task 4.1 — Implement S3 Vectors query with per-tenant index
     # Hint: Use s3vectors client, index_name = f"{tenant_id}-financial-records"
     #       Call _embed(query) then s3v.query_vectors(...)
-    raise NotImplementedError("Complete Task 4.1 — search_financial_docs")  # REPLACE THIS LINE
+    if not tenant_id:
+        return json.dumps({"error": "tenant_id is required"})
 
+    index_name = f"{tenant_id}-financial-records"
+    if not validate_tenant_index(index_name, tenant_id):
+        return json.dumps({"error": "Invalid tenant index"})
+
+    query_embedding = _embed(query)
+
+    s3v = boto3.client('s3vectors')
+    response = s3v.query_vectors(
+        vectorBucketName=S3_VECTOR_BUCKET,
+        indexName=index_name,
+        queryVector={'float32': query_embedding},
+        topK=top_k,
+        returnMetadata=True,
+        returnDistance=True,
+    )
+
+    results = []
+    for vector in response.get('vectors', []):
+        metadata = vector.get('metadata', {})
+        results.append({
+            'text': metadata.get('source_text', ''),
+            'score': round(1.0 - vector.get('distance', 0), 4),
+            'metadata': metadata,
+        })
+
+    return json.dumps({"results": results})
 
 # ---------------------------------------------------------------------------
 # Task 4.2 — Implement tenant index validation
@@ -141,8 +168,8 @@ def validate_tenant_index(index_name: str, tenant_id: str) -> bool:
         True if the index name matches the tenant's expected pattern.
     """
     # TODO: Task 4.2 — Validate the index name belongs to the correct tenant
-    raise NotImplementedError("Complete Task 4.2 — validate_tenant_index")  # REPLACE THIS LINE
-
+    expected_index = f"{tenant_id}-financial-records"
+    return index_name == expected_index
 
 # ---------------------------------------------------------------------------
 # Entry point

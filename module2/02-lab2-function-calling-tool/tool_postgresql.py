@@ -116,8 +116,21 @@ def _set_tenant_session(rds_data, tenant_id: str) -> str:
         transactionId to use in subsequent execute_statement calls.
     """
     # TODO: Task 2.1 — Set the RLS session variable for tenant isolation
-    raise NotImplementedError("Complete Task 2.1 — _set_tenant_session")  # REPLACE THIS LINE
-
+    txn = rds_data.begin_transaction(
+        resourceArn=AURORA_CLUSTER_ARN,
+        secretArn=APP_USER_SECRET_ARN,
+        database=DATABASE,
+    )
+    transaction_id = txn['transactionId']
+    rds_data.execute_statement(
+        resourceArn=AURORA_CLUSTER_ARN,
+        secretArn=APP_USER_SECRET_ARN,
+        database=DATABASE,
+        transactionId=transaction_id,
+        sql="SELECT set_config('app.current_tenant', :tid, false)",
+        parameters=[{'name': 'tid', 'value': {'stringValue': tenant_id}}],
+    )
+    return transaction_id
 
 # ---------------------------------------------------------------------------
 # Task 2.2 — Implement the @tool decorated retrieval function
@@ -146,8 +159,41 @@ def search_property_surveys(query: str, tenant_id: str, top_k: int = 3) -> str:
     """
     # TODO: Task 2.2 — Implement the retrieval tool with RLS isolation
     # Hint: Use the module-level RDS_DATA client and _embed() helper
-    raise NotImplementedError("Complete Task 2.2 — search_property_surveys")  # REPLACE THIS LINE
+    if not tenant_id:
+        return json.dumps({"error": "tenant_id is required"})
 
+    rds_data = RDS_DATA
+    query_embedding = _embed(query)
+
+    transaction_id = _set_tenant_session(rds_data, tenant_id)
+    response = rds_data.execute_statement(
+        resourceArn=AURORA_CLUSTER_ARN,
+        secretArn=APP_USER_SECRET_ARN,
+        database=DATABASE,
+        transactionId=transaction_id,
+        sql=(
+            "SELECT id, chunks, metadata, "
+            "embedding <=> :embedding::vector AS score "
+            "FROM property_mgmt.property_surveys "
+            "ORDER BY embedding <=> :embedding::vector LIMIT :k"
+        ),
+        parameters=[
+            {'name': 'embedding', 'value': {'stringValue': str(query_embedding)}},
+            {'name': 'k',         'value': {'longValue': top_k}},
+        ],
+    )
+    rds_data.commit_transaction(
+        resourceArn=AURORA_CLUSTER_ARN,
+        secretArn=APP_USER_SECRET_ARN,
+        transactionId=transaction_id,
+    )
+    results = [
+        {'text': r[1]['stringValue'],
+         'metadata': json.loads(r[2].get('stringValue', '{}')),
+         'score': r[3]['doubleValue']}
+        for r in response.get('records', [])
+    ]
+    return json.dumps({"results": results})
 
 # ---------------------------------------------------------------------------
 # Demo / verification

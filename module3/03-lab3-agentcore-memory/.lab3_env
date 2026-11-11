@@ -1,0 +1,6 @@
+export LAB3_RUNTIME_ID="workshopModule3Lab3MemoryAgent-Py3Sx242mY"
+export LAB3_AGENT_ARN="arn:aws:bedrock-agentcore:us-east-1:596531429819:runtime/workshopModule3Lab3MemoryAgent-Py3Sx242mY"
+export LAB3_AGENT_ENDPOINT="https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-1%3A596531429819%3Aruntime%2FworkshopModule3Lab3MemoryAgent-Py3Sx242mY/invocations?qualifier=DEFAULT"
+export LAB3_STOP_ENDPOINT="https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-1%3A596531429819%3Aruntime%2FworkshopModule3Lab3MemoryAgent-Py3Sx242mY/stopruntimesession?qualifier=DEFAULT"
+export AGENTCORE_MEMORY_ID="workshop_memory-QKQ1tMDfUZ"
+export AGENTCORE_TVM_ROLE_ARN="arn:aws:iam::596531429819:role/workshop-infrastructure-lab3-memory-tvm-role"

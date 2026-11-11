@@ -1,0 +1,68 @@
+default_agent: workshopModule3Lab2Agent
+agents:
+  workshopModule3Lab2Agent:
+    name: workshopModule3Lab2Agent
+    language: python
+    node_version: null
+    entrypoint: /workshop/module3/02-lab2-multi-tenant-mcp-tool-gateway/agent.py
+    deployment_type: direct_code_deploy
+    runtime_type: PYTHON_3_13
+    platform: linux/arm64
+    container_runtime: null
+    source_path: /workshop/module3/02-lab2-multi-tenant-mcp-tool-gateway
+    aws:
+      execution_role: arn:aws:iam::596531429819:role/AmazonBedrockAgentCoreSDKRuntime-us-east-1-71a3173ced
+      execution_role_auto_create: false
+      account: '596531429819'
+      region: us-east-1
+      ecr_repository: null
+      ecr_auto_create: true
+      s3_path: s3://bedrock-agentcore-codebuild-sources-596531429819-us-east-1
+      s3_auto_create: false
+      network_configuration:
+        network_mode: PUBLIC
+        network_mode_config: null
+      protocol_configuration:
+        server_protocol: HTTP
+      observability:
+        enabled: true
+      lifecycle_configuration:
+        idle_runtime_session_timeout: null
+        max_lifetime: null
+    bedrock_agentcore:
+      agent_id: workshopModule3Lab2Agent-zZ89BkALNm
+      agent_arn: arn:aws:bedrock-agentcore:us-east-1:596531429819:runtime/workshopModule3Lab2Agent-zZ89BkALNm
+      agent_session_id: null
+    codebuild:
+      project_name: null
+      execution_role: null
+      source_bucket: null
+    memory:
+      mode: NO_MEMORY
+      memory_id: null
+      memory_arn: null
+      memory_name: null
+      event_expiry_days: 30
+      first_invoke_memory_check_done: false
+      was_created_by_toolkit: false
+    identity:
+      credential_providers: []
+      workload: null
+    aws_jwt:
+      enabled: false
+      audiences: []
+      signing_algorithm: ES384
+      issuer_url: null
+      duration_seconds: 300
+    authorizer_configuration:
+      customJWTAuthorizer:
+        discoveryUrl: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_kmG1GozpA/.well-known/openid-configuration
+        allowedAudience:
+        - 377q3o4ajjlr2sa8n80l9ic3o2
+    request_header_configuration:
+      requestHeaderAllowlist:
+      - Authorization
+    oauth_configuration: null
+    api_key_env_var_name: null
+    api_key_credential_provider_name: null
+    is_generated_by_agentcore_create: false

@@ -121,8 +121,20 @@ def lambda_handler(event: dict, context) -> dict:
         body = json.loads(event.get("body", "{}"))
 
         # TODO: Task 1.4 - Extract tenant_id and construct the tenant-scoped session ID
-        raise NotImplementedError("Complete Task 1.4 - handle_request")  # REPLACE THIS LINE
+        # Step 1: Tenant identity from the validated JWT (API Gateway authorizer)
+        authorizer = event.get("requestContext", {}).get("authorizer", {})
+        tenant_id = authorizer.get("tenantId", "")
+        if not tenant_id:
+            return {
+                "statusCode": 400,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "tenant_id not found in authorizer context"}),
+            }
 
+        # Step 2: Construct tenant-scoped session ID (server-side, not client-controlled)
+        conversation_id = body.get("conversation_id", str(uuid.uuid4()))
+        session_id = f"{tenant_id}-{conversation_id}"
+        message = body.get("message", body.get("prompt", ""))
         # ---------------------------------------------------------------------------
         # Pre-implemented: Steps 3-5 (TVM AssumeRole, invoke AgentCore, parse response)
         # ---------------------------------------------------------------------------

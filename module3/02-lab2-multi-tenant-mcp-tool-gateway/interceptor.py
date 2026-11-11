@@ -86,7 +86,12 @@ def _extract_tenant_id(auth_header: str) -> str:
     """
     try:
         # TODO: Task 2.4a — Extract tenantId from the JWT claims
-        raise NotImplementedError("Complete Task 2.4a — _extract_tenant_id")  # REPLACE THIS LINE
+        token = auth_header.removeprefix("Bearer ").strip()
+        claims = jwt.decode(token, options={"verify_signature": False}, algorithms=["RS256"])
+        tenant_id = claims.get("custom:tenant_id", "")
+        if not tenant_id:
+            raise ValueError("JWT missing custom:tenant_id claim")
+        return tenant_id
     except (NotImplementedError, Exception):
         raise
 
@@ -114,7 +119,36 @@ def _handle_invoke_tool(event: dict, tenant_id: str) -> dict:
     """
     try:
         # TODO: Task 2.4b — Propagate headers and log the invocation
-        raise NotImplementedError("Complete Task 2.4b — _handle_invoke_tool")  # REPLACE THIS LINE
+        mcp_payload = event.get("mcp", {})
+        gateway_request = mcp_payload.get("gatewayRequest", {})
+        request_body = gateway_request.get("body", {})
+        headers = gateway_request.get("headers", {})
+        auth_header = headers.get("Authorization", headers.get("authorization", ""))
+        tool_name = request_body.get("params", {}).get("name", "") if isinstance(request_body, dict) else ""
+
+        # Audit log — every tool invocation attributed to a tenant
+        logger.info(json.dumps({
+            "event": "tool_invocation",
+            "tenant_id": tenant_id,
+            "tool": tool_name,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }))
+
+        # Propagate headers (does NOT override Authorization — OAuth token passes through)
+        # - x-tenant-id: Lambda targets read from context.client_context
+        # - x-user-token: MCP Server extracts tenant_id from user JWT claims
+        return {
+            "interceptorOutputVersion": "1.0",
+            "mcp": {
+                "transformedGatewayRequest": {
+                    "headers": {
+                        "x-tenant-id": tenant_id,
+                        "x-user-token": auth_header.removeprefix("Bearer ").strip(),
+                    },
+                    "body": request_body,
+                }
+            }
+        }
     except (NotImplementedError, Exception) as e:
         logger.error("_handle_invoke_tool failed: %s", e)
         request_body = event.get("mcp", {}).get("gatewayRequest", {}).get("body", {})

@@ -200,7 +200,43 @@ def _query_properties(tenant_id: str, arguments: dict) -> dict:
 
     try:
         # TODO: Task 2.2 — Set RLS context and query Aurora for tenant properties
-        raise NotImplementedError("Complete Task 2.2 — query_properties")  # REPLACE THIS LINE
+        # Use transaction to maintain RLS session across calls
+        txn = rds.begin_transaction(
+            resourceArn=CLUSTER_ARN, secretArn=SECRET_ARN, database=DB_NAME
+        )
+        transaction_id = txn['transactionId']
+
+        # Set RLS context within the transaction
+        rds.execute_statement(
+            resourceArn=CLUSTER_ARN, secretArn=SECRET_ARN, database=DB_NAME,
+            transactionId=transaction_id,
+            sql=f"SET app.tenant_id = '{tenant_id}'",
+        )
+
+        # Query - RLS policy filters to current tenant's rows only
+        result = rds.execute_statement(
+            resourceArn=CLUSTER_ARN, secretArn=SECRET_ARN, database=DB_NAME,
+            transactionId=transaction_id,
+            sql="SELECT property_id, address, status FROM properties LIMIT :limit",
+            parameters=[{"name": "limit", "value": {"longValue": limit}}],
+        )
+
+        rds.commit_transaction(
+            resourceArn=CLUSTER_ARN, secretArn=SECRET_ARN,
+            transactionId=transaction_id,
+        )
+
+        # Transform raw RDS Data API records into clean objects
+        columns = ["property_id", "address", "status"]
+        properties = []
+        for row in result.get("records", []):
+            prop = {}
+            for i, col in enumerate(columns):
+                cell = row[i]
+                prop[col] = cell.get("stringValue", cell.get("longValue", ""))
+            properties.append(prop)
+
+        return {"tenant_id": tenant_id, "properties": properties}
     except Exception as e:
         import traceback
         print(f"ERROR: {type(e).__name__}: {e}")

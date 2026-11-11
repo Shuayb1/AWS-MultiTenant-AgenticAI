@@ -156,8 +156,12 @@ def create_agent(tenant_id: str) -> tuple:
         Tuple of (Agent, None). Second element is None (no MCP client to clean up).
     """
     # TODO: Task 5.1 — Create agent with all three tools (function calling + MCP)
-    raise NotImplementedError("Complete Task 5.1 — create_agent")  # REPLACE THIS LINE
-
+    agent = Agent(
+        model=MODEL_ID,
+        tools=[search_property_surveys, search_maintenance_records, search_financial_docs],
+        system_prompt=SYSTEM_PROMPT + f"\n\nCurrent tenant_id: {tenant_id}",
+    )
+    return agent, None
 
 # ---------------------------------------------------------------------------
 # Task 5.2 — Lambda handler with authorizer-injected tenant context
@@ -185,8 +189,42 @@ def lambda_handler(event: dict, context) -> dict:
         API Gateway response dict with statusCode and body.
     """
     # TODO: Task 5.2 — Extract tenant context, create agent, return response
-    raise NotImplementedError("Complete Task 5.2 — lambda_handler")  # REPLACE THIS LINE
+    # Step 1: Extract tenant context from authorizer (JWT-verified, immutable)
+    tenant_ctx = extract_tenant_context(event)
+    if not tenant_ctx:
+        return {
+            'statusCode': 403,
+            'body': json.dumps({'error': 'Missing tenant context — authorizer rejected request'}),
+        }
 
+    tenant_id = tenant_ctx['tenantId']
+
+    # Step 2: Parse user query from request body
+    body = json.loads(event.get('body', '{}'))
+    query = body.get('query', '')
+    if not query:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Missing "query" in request body'}),
+        }
+
+    # Step 3: Create agent — tenant_id is framework-injected, not LLM-controlled
+    agent, mcp_client = create_agent(tenant_id)
+    try:
+        # Step 4: LLM decides which tool; authorizer decided which tenant
+        response = agent(f"[tenant_id: {tenant_id}] {query}")
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'response': str(response),
+                'tenant_id': tenant_id,
+                'tier': tenant_ctx['tier'],
+                'tools_used': list(response.metrics.tool_metrics.keys()),
+            }),
+        }
+    finally:
+        if mcp_client:
+            mcp_client.__exit__(None, None, None)
 
 # ---------------------------------------------------------------------------
 # Entry point (Lambda runtime calls lambda_handler directly)

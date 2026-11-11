@@ -129,13 +129,36 @@ def invoke_with_tools(tenant_id: str, jwt_token: str, message: str) -> dict:
     """
     try:
         # TODO: Task 2.6 — Discover tools from Gateway, create agent, invoke
-        raise NotImplementedError("Complete Task 2.6 — invoke_with_tools")  # REPLACE THIS LINE
+        # Discover tools from the Gateway
+        gateway_tools = _discover_tools(jwt_token)
+        tool_names = [t["name"] for t in gateway_tools]
+
+        # Create @tool wrappers that call the Gateway via HTTP
+        @tool
+        def query_orders(status: str = "") -> str:
+            """Query tenant orders from DynamoDB. Returns order details including product, amount, and status."""
+            return _invoke_tool("query-orders___query_orders", {"status": status}, jwt_token)
+
+        @tool
+        def query_properties(limit: int = 10) -> str:
+            """Query properties managed by the current tenant. Returns property address, status, and details."""
+            return _invoke_tool("query-properties___query_properties", {"limit": limit}, jwt_token)
+
+        # Create and invoke the agent
+        model = BedrockModel(model_id=MODEL_ID, region_name=REGION)
+        agent = Agent(model=model, tools=[query_orders, query_properties], system_prompt=SYSTEM_PROMPT)
+        response = agent(message)
+
+        return {
+            "response": str(response),
+            "tenant_id": tenant_id,
+            "tools_used": list(response.metrics.tool_metrics.keys()),
+        }
     except Exception as e:
         import traceback
         app.logger.error(f"invoke_with_tools error: {type(e).__name__}: {e}")
         app.logger.error(traceback.format_exc())
         return {"error": str(e), "type": type(e).__name__, "tenant_id": tenant_id}
-
 
 # ---------------------------------------------------------------------------
 # AgentCore Runtime entrypoint

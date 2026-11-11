@@ -89,7 +89,41 @@ def invoke_agent(payload: dict, context) -> dict:
     """
     try:
         # TODO: Task 1.1 - Decode JWT, extract tenant_id, track session state, invoke agent
-        raise NotImplementedError("Complete Task 1.1 - invoke_agent")  # REPLACE THIS LINE
+        # Step 1: Read JWT from request headers
+        # Phase 1 (JWT auth): standard Authorization header
+        # Phase 2 (IAM auth): custom header forwarded by backend Lambda
+        headers = context.request_headers or {}
+        auth_header = (
+            headers.get("Authorization", "")
+            or headers.get("authorization", "")
+            or headers.get("x-amzn-bedrock-agentcore-runtime-custom-authorization", "")
+            or headers.get("X-Amzn-Bedrock-AgentCore-Runtime-Custom-Authorization", "")
+        )
+        tenant_id = ""
+
+        # Step 2: Decode JWT payload to extract tenant_id
+        if auth_header.startswith("Bearer "):
+            token = auth_header.removeprefix("Bearer ")
+            claims = _decode_jwt_payload(token)
+            tenant_id = claims.get("custom:tenant_id", "")
+
+        if not tenant_id:
+            return {"error": "tenant_id missing - JWT required in Authorization or custom header"}
+
+        # Step 3: Track per-session invocation count
+        _session_state["invocation_count"] = _session_state.get("invocation_count", 0) + 1
+        _session_state["tenant_id"] = tenant_id
+
+        # Step 4: Invoke the agent and return response
+        message = payload.get("prompt", payload.get("message", ""))
+        response = _agent(message)
+
+        return {
+            "response": str(response),
+            "tenant_id": tenant_id,
+            "session_id": context.session_id,
+            "invocation_count": _session_state["invocation_count"],
+        }
     except Exception as e:
         import traceback
         app.logger.error(f"invoke_agent error: {type(e).__name__}: {e}")

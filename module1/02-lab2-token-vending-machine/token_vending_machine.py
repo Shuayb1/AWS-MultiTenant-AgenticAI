@@ -130,7 +130,13 @@ class TokenVendingMachine:
         """
         try:
             # TODO: Task 2.1 — call sts:AssumeRole with tenantId session tag
-            raise NotImplementedError("Complete Task 2.1 — _assume_role")  # REPLACE THIS LINE
+            response = self._sts_client.assume_role(
+                RoleArn=self.role_arn,
+                RoleSessionName=f'tenant-session-{tenant_id}',
+                Tags=[{'Key': 'tenantId', 'Value': tenant_id}],
+                DurationSeconds=900,
+            )
+            return response['Credentials']  # REPLACE THIS LINE
         except IsolationError:
             raise
         except Exception as exc:
@@ -159,8 +165,22 @@ class TokenVendingMachine:
             IsolationError: if tenantId is absent/empty, or STS fails.
         """
         # TODO: Task 2.2 — validate tenant_id, check cache, build boto3.Session
-        raise NotImplementedError("Complete Task 2.2 — get_session")  # REPLACE THIS LINE
-
+        tenant_id = tenant_context.get('tenantId')
+        if not tenant_id:
+            raise IsolationError(
+                "tenant_context must contain a non-empty 'tenantId'. "
+                "Ensure the Lambda Authorizer is injecting tenant context correctly."
+            )
+        if tenant_id in self._cache:
+            creds = self._cache[tenant_id]
+        else:
+            creds = self._assume_role(tenant_id)
+            self._cache[tenant_id] = creds
+        return boto3.Session(
+            aws_access_key_id=creds['AccessKeyId'],
+            aws_secret_access_key=creds['SecretAccessKey'],
+            aws_session_token=creds['SessionToken'],
+        )
     # ------------------------------------------------------------------
     # Public: convenience wrappers
     # ------------------------------------------------------------------

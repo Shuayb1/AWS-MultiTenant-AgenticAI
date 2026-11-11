@@ -62,7 +62,28 @@ def lambda_handler(event: dict, context) -> dict:
     try:
         # TODO: Task 2.1 — Read tenant_id from propagated headers (via context),
         #                   get TVM-scoped session, query DynamoDB orders
-        raise NotImplementedError("Complete Task 2.1 — query_orders")  # REPLACE THIS LINE
+        # Read tenant_id from propagated headers (via Lambda context.client_context)
+        propagated_headers = context.client_context.custom.get("bedrockAgentCorePropagatedHeaders", {})
+        tenant_id = propagated_headers.get("x-tenant-id", "")
+        if not tenant_id:
+            return {"statusCode": 400, "body": json.dumps({"error": "x-tenant-id header missing"})}
+
+        session = isolation.get_session({"tenantId": tenant_id})
+        dynamodb = session.resource("dynamodb")
+        table = dynamodb.Table(TABLE_NAME)
+
+        result = table.query(
+            KeyConditionExpression=Key("PK").eq(f"{tenant_id}#orders"),
+            Limit=limit,
+        )
+
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                "tenant_id": tenant_id,
+                "orders": result.get("Items", []),
+            }, default=str),
+        }
     except Exception as e:
         import traceback
         print(f"ERROR: {type(e).__name__}: {e}")

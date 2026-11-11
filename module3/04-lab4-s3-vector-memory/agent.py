@@ -43,13 +43,23 @@ that you are recalling past information, unless the user asks."""
 # ---------------------------------------------------------------------------
 
 # TODO: Task 4.1 - instantiate MultiTenantS3VectorMemory
-_store = None  # REPLACE THIS LINE
+_store = MultiTenantS3VectorMemory(
+    bucket_name  = os.environ["S3_VECTOR_BUCKET_NAME"],
+    tvm_role_arn = os.environ.get("S3_VECTOR_TVM_ROLE_ARN"),
+)
 
 # TODO: Task 4.2 - instantiate S3VectorMemoryPlugin
-_plugin = None  # REPLACE THIS LINE
+_plugin = S3VectorMemoryPlugin(store=_store, base_prompt=BASE_PROMPT)
 
 # TODO: Task 4.3 - create the Agent singleton with plugins
-_agent = None  # REPLACE THIS LINE
+_agent = Agent(
+    model            = BedrockModel(model_id=MODEL_ID, region_name=AWS_REGION),
+    name             = "assistant",
+    plugins          = [_plugin],
+    tools            = [_plugin.memory_tool],
+    system_prompt    = BASE_PROMPT,
+    callback_handler = None,
+)
 
 
 def _decode_jwt_payload(token: str) -> dict:

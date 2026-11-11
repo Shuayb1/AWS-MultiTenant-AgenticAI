@@ -1,0 +1,4 @@
+export LAB4_RUNTIME_ID="workshopModule3Lab4S3VectorAgent-3NjNldAKhI"
+export LAB4_AGENT_ENDPOINT="https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-1%3A596531429819%3Aruntime%2FworkshopModule3Lab4S3VectorAgent-3NjNldAKhI/invocations?qualifier=DEFAULT"
+export S3_VECTOR_BUCKET_NAME="workshop-vector-memory-596531429819"
+export S3_VECTOR_TVM_ROLE_ARN="arn:aws:iam::596531429819:role/workshop-infrastructure-lab4-s3vectors-tvm-role"

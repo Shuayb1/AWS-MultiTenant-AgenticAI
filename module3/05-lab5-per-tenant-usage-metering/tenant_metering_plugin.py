@@ -91,8 +91,25 @@ class TenantMeteringPlugin(Plugin):
           - InvocationCount: always 1 (for counting total invocations)
         """
         # TODO: Task 5.3a - Emit token usage metrics after invocation
-        raise NotImplementedError("Complete Task 5.3a")  # REPLACE THIS LINE
+        if not event.agent:
+            return
 
+        metrics = event.agent.event_loop_metrics
+        latest = metrics.latest_agent_invocation
+        if not latest or not latest.usage:
+            return
+
+        input_tokens = latest.usage.get("inputTokens", 0)
+        output_tokens = latest.usage.get("outputTokens", 0)
+
+        self._emit_metrics({
+            "InputTokens": input_tokens,
+            "OutputTokens": output_tokens,
+            "TotalTokens": input_tokens + output_tokens,
+            "LatencyMs": metrics.accumulated_metrics.get("latencyMs", 0),
+            "CycleCount": len(latest.cycles) if latest.cycles else 1,
+            "InvocationCount": 1,
+        })
     # ------------------------------------------------------------------
     # Task 5.3b: Emit tool invocation metric after tool call
     # ------------------------------------------------------------------
@@ -104,8 +121,11 @@ class TenantMeteringPlugin(Plugin):
         as an additional dimension for per-tool-per-tenant tracking.
         """
         # TODO: Task 5.3b - Emit tool invocation metric after tool call
-        raise NotImplementedError("Complete Task 5.3b")  # REPLACE THIS LINE
-
+        tool_name = event.tool_use.get("name", "unknown")
+        self._emit_metrics(
+            {"ToolInvocations": 1},
+            extra_dimensions={"ToolName": tool_name},
+        )
     # ------------------------------------------------------------------
     # EMF emission helper (provided)
     # ------------------------------------------------------------------

@@ -84,10 +84,18 @@ class TenantOpenSearchClient:
             raise IsolationError("OPENSEARCH_ENDPOINT not configured.")
 
         # TODO: Task 5.1 - Get scoped credentials from TVM and build AWS4Auth
-        raise NotImplementedError("Complete Task 5.1 - get credentials and build AWS4Auth")  # REPLACE THIS LINE
+        session = token_vending_machine.get_session(tenant_context)
+        credentials = session.get_credentials().get_frozen_credentials()
+        auth = AWS4Auth(
+            credentials.access_key,
+            credentials.secret_key,
+            _AWS_REGION,
+            _SERVICE,
+            session_token=credentials.token,
+        )
 
         # TODO: Task 5.2 - Set the tenant-scoped index name
-        raise NotImplementedError("Complete Task 5.2 - set index name")  # REPLACE THIS LINE
+        self.index_name = f"{tenant_id}-documents"
 
         host = _endpoint.replace('https://', '').replace('http://', '').rstrip('/')
         self._client = OpenSearch(
@@ -111,7 +119,21 @@ class TenantOpenSearchClient:
         mechanism here. Isolation is structural (index name) + FGAC.
         """
         # TODO: Task 5.3 - Index a document into the tenant's dedicated index
-        raise NotImplementedError("Complete Task 5.3 - index_document")  # REPLACE THIS LINE
+        body = {
+            'document_id': document_id,
+            'title': title,
+            'content': content,
+            'tenant_id': self.tenant_id,
+        }
+        try:
+            return self._client.index(
+                index=self.index_name,
+                body=body,
+            )
+        except Exception as exc:
+            raise IsolationError(
+                f"index_document failed for tenant '{self.tenant_id}': {exc}"
+            ) from exc
 
     def search_documents(self, query: str, size: int = 10) -> List[Dict]:
         """
@@ -121,8 +143,25 @@ class TenantOpenSearchClient:
         boundary. Only this tenant's documents exist in this index.
         """
         # TODO: Task 5.4 - Search within the tenant's dedicated index
-        raise NotImplementedError("Complete Task 5.4 - search_documents")  # REPLACE THIS LINE
-
+        body = {
+            'query': {
+                'multi_match': {
+                    'query': query,
+                    'fields': ['title^2', 'content'],
+                }
+            },
+            'size': size,
+        }
+        try:
+            response = self._client.search(index=self.index_name, body=body)
+            return [hit['_source'] for hit in response['hits']['hits']]
+        except Exception as exc:
+            if 'index_not_found_exception' in str(exc):
+                return []
+            raise IsolationError(
+                f"search_documents failed for tenant '{self.tenant_id}': {exc}"
+            ) from exc
+            
     def get_document(self, document_id: str) -> Optional[Dict]:
         """Get a document by ID from the tenant's dedicated index."""
         try:

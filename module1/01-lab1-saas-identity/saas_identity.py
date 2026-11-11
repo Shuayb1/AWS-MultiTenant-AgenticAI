@@ -105,7 +105,7 @@ class SaaSIdentityService:
             Tenant ID string or None if not present
         """
         # TODO: Task 1.1 — Extract the SaaS identity (tenant_id) from the decoded JWT claims
-        raise NotImplementedError("Complete Task 1.1")  # REPLACE THIS LINE
+        return decoded_token.get('custom:tenant_id')
 
     # ------------------------------------------------------------------
     # Task 1.2: Retrieve tenant context from DynamoDB
@@ -125,7 +125,12 @@ class SaaSIdentityService:
             Full tenant metadata dict or None if not found
         """
         # TODO: Task 1.2 — Retrieve full tenant context from DynamoDB
-        raise NotImplementedError("Complete Task 1.2")  # REPLACE THIS LINE
+        try:
+            response = self.table.get_item(Key={'tenantId': tenant_id})
+            return response.get('Item')
+        except Exception as e:
+            print(f"Error retrieving tenant context: {e}")
+            return None
 
     # ------------------------------------------------------------------
     # Task 1.3: Authorizer decision logic
@@ -147,8 +152,21 @@ class SaaSIdentityService:
             Enriched tenant context dict if authorized, None if denied
         """
         # TODO: Task 1.3 — Implement the authorizer decision logic
-        raise NotImplementedError("Complete Task 1.3")  # REPLACE THIS LINE
+        # Step 1: Extract tenant_id from the decoded JWT
+        tenant_id = self.extract_tenant_id(decoded_token)
+        if not tenant_id:
+            return None  # Will result in Deny
 
+        # Step 2: Enrich with full tenant context
+        tenant_context = self.get_tenant_context(tenant_id)
+
+        # Step 3: Validate - fail closed if tenant not found or not active
+        if not tenant_context or tenant_context.get('status') != 'active':
+            return None  # Will result in Deny
+
+        # Step 4: Return enriched context for injection into downstream services
+        return tenant_context
+        
     # ------------------------------------------------------------------
     # Pre-implemented: Call a protected API endpoint
     # ------------------------------------------------------------------

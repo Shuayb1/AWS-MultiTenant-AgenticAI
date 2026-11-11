@@ -81,8 +81,31 @@ def search_maintenance_records(query: str, tenant_id: str, top_k: int = 3) -> st
         JSON string with matching chunks, scores, and metadata.
     """
     # TODO: Task 3.1 — Call Bedrock KB Retrieve API with tenant_id metadata filter
-    raise NotImplementedError("Complete Task 3.1 — search_maintenance_records")  # REPLACE THIS LINE
+    if not tenant_id:
+        return json.dumps({"error": "tenant_id is required"})
 
+    client = boto3.client('bedrock-agent-runtime')
+    tenant_filter = build_tenant_filter(tenant_id)
+
+    response = client.retrieve(
+        knowledgeBaseId=KNOWLEDGE_BASE_ID,
+        retrievalQuery={'text': query},
+        retrievalConfiguration={
+            'vectorSearchConfiguration': {
+                'numberOfResults': top_k,
+                'filter': tenant_filter,
+            }
+        },
+    )
+
+    results = []
+    for item in response.get('retrievalResults', []):
+        results.append({
+            'text': item['content']['text'],
+            'score': item.get('score', 0),
+            'metadata': item.get('metadata', {}),
+        })
+    return json.dumps({"results": results})
 
 # ---------------------------------------------------------------------------
 # Task 3.2 — Implement the metadata filter builder
@@ -104,8 +127,12 @@ def build_tenant_filter(tenant_id: str) -> Dict:
         Filter dict in Bedrock KB RetrievalFilter format.
     """
     # TODO: Task 3.2 — Build the metadata filter for tenant isolation
-    raise NotImplementedError("Complete Task 3.2 — build_tenant_filter")  # REPLACE THIS LINE
-
+    return {
+        'stringContains': {
+            'key': 'x-amz-bedrock-kb-source-uri',
+            'value': f'/kb-datasource/{tenant_id}/',
+        }
+    }
 
 # ---------------------------------------------------------------------------
 # Demo / verification

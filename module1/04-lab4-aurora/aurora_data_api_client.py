@@ -150,8 +150,42 @@ class AuroraDataAPIClient:
             #         — activates the RLS policy for this transaction
             # Step 3: execute the actual query (RLS filters rows automatically)
             # Step 4: commit_transaction
-            raise NotImplementedError("Complete Task 4.2 — execute within tenant transaction")  # REPLACE THIS LINE
+            # Step 1: open a transaction
+            tr = self._rds_data.begin_transaction(
+                resourceArn=self.cluster_arn,
+                secretArn=self.secret_arn,
+                database=self.database,
+            )
 
+            # Step 2: set the session variable using set_config()
+            # (SET command doesn't accept bind params; set_config() does)
+            self._rds_data.execute_statement(
+                resourceArn=self.cluster_arn,
+                secretArn=self.secret_arn,
+                database=self.database,
+                sql="SELECT set_config('app.current_tenant', :tenantId, false)",
+                parameters=[{'name': 'tenantId', 'value': {'stringValue': self.tenant_id}}],
+                transactionId=tr['transactionId'],
+            )
+
+            # Step 3: execute the actual query - RLS now filters rows automatically
+            response = self._rds_data.execute_statement(
+                resourceArn=self.cluster_arn,
+                secretArn=self.secret_arn,
+                database=self.database,
+                sql=sql,
+                parameters=parameters,
+                transactionId=tr['transactionId'],
+            )
+
+            # Step 4: commit
+            self._rds_data.commit_transaction(
+                resourceArn=self.cluster_arn,
+                secretArn=self.secret_arn,
+                transactionId=tr['transactionId'],
+            )
+
+            return response
         except AuroraIsolationError:
             raise
         except Exception as exc:
